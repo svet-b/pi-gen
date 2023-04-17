@@ -1,0 +1,8 @@
+proc                  /proc           proc     defaults         0 0
+LABEL=bootfs          /boot           vfat     defaults         0 2
+LABEL=rootfs          /img            btrfs    defaults,subvol=@img,ssd_spread,noatime,compress-force=zstd      0 0
+LABEL=rootfs          /home           btrfs    defaults,subvol=@home,ssd_spread,noatime,compress-force=zstd     0 0
+LABEL=rootfs          /var            btrfs    defaults,subvol=@var,ssd_spread,noatime,compress-force=zstd      0 0
+/home/root            /root           none     bind              0 0
+tmpfs                 /tmp            tmpfs    nosuid,nodev      0 0
+LABEL=rootfs          /mnt/rootfs     btrfs    defaults,noauto,ssd_spread,noatime,compress-force=zstd           0 0

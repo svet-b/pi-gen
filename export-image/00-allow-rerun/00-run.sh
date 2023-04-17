@@ -5,5 +5,6 @@ if [ ! -x "${ROOTFS_DIR}/usr/bin/qemu-arm-static" ]; then
 fi
 
 if [ -e "${ROOTFS_DIR}/etc/ld.so.preload" ]; then
-	mv "${ROOTFS_DIR}/etc/ld.so.preload" "${ROOTFS_DIR}/etc/ld.so.preload.disabled"
+	rm "${ROOTFS_DIR}/etc/ld.so.preload"
+	# mv "${ROOTFS_DIR}/etc/ld.so.preload" "${ROOTFS_DIR}/etc/ld.so.preload.disabled"
 fi

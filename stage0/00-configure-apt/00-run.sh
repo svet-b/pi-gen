@@ -19,3 +19,6 @@ dpkg --add-architecture armhf
 apt-get update
 apt-get dist-upgrade -y
 EOF
+
+# Do not install manpages, documentation, and locales
+install -m 644 files/01_nodoc "${ROOTFS_DIR}/etc/dpkg/dpkg.cfg.d/"
