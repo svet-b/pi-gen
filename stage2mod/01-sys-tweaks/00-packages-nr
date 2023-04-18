@@ -2,21 +2,20 @@ ssh less sudo psmisc strace ed ncdu crda
 debconf-utils parted
 bash-completion pkg-config
 avahi-daemon
+resolvconf
 hardlink ca-certificates curl
 fake-hwclock usbutils
 dosfstools
-apt-listchanges
 usb-modeswitch
 libpam-chksshpwd
-rsync
 htop
 policykit-1
 rng-tools
 ethtool
 pciutils
-rpi-eeprom
-raspinfo
 udisks2
 unzip zip
 file
 btrfs-progs
+duperemove
+xz-utils
