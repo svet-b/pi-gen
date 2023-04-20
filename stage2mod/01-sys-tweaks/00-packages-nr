@@ -13,6 +13,5 @@ policykit-1
 rng-tools
 ethtool
 pciutils
-udisks2
 unzip zip
 file
