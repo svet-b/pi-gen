@@ -47,7 +47,7 @@ true > "${ROOTFS_DIR}/etc/machine-id"
 
 ln -nsf /proc/mounts "${ROOTFS_DIR}/etc/mtab"
 
-find "${ROOTFS_DIR}/var/log/" -type f -exec cp /dev/null {} \;
+#find "${ROOTFS_DIR}/var/log/" -type f -exec cp /dev/null {} \;
 
 rm -f "${ROOTFS_DIR}/root/.vnc/private.key"
 rm -f "${ROOTFS_DIR}/etc/vnc/updateid"
