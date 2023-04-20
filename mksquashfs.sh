@@ -11,7 +11,7 @@ mount ${LOOPDEV}p2 $TMPROOT
 SQFS_FILE="${IMAGE_FILE%.*}.sqfs"
 mksquashfs $TMPROOT $SQFS_FILE -noappend -no-exports -no-fragments \
   -all-root -all-time 0 -mkfs-time 0 -noI -noD -noF -noX \
-  -e writable
+  -wildcards -e 'writable/*'
 
 # Cleanup
 umount $TMPROOT
