@@ -16,6 +16,3 @@ pciutils
 udisks2
 unzip zip
 file
-btrfs-progs
-duperemove
-xz-utils
