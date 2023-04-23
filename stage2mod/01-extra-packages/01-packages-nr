@@ -4,6 +4,7 @@ xz-utils
 chrony
 nmap
 lsof
+wget
 socat
 duperemove
 netplug
