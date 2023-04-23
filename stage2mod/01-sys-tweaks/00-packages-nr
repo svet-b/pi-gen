@@ -1,14 +1,11 @@
 ssh less sudo psmisc strace ed ncdu crda
 debconf-utils parted
 bash-completion pkg-config
-avahi-daemon
 resolvconf
 hardlink ca-certificates curl
 fake-hwclock usbutils
 dosfstools
 usb-modeswitch
-libpam-chksshpwd
-htop
 policykit-1
 rng-tools
 ethtool
