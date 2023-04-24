@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMG_FILE="${STAGE_WORK_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.img"
+# IMG_FILE="${STAGE_WORK_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.img"
 INFO_FILE="${STAGE_WORK_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.info"
 
 on_chroot << EOF
@@ -78,39 +78,46 @@ cp "$ROOTFS_DIR/etc/rpi-issue" "$INFO_FILE"
 
 mkdir -p "${DEPLOY_DIR}"
 
-rm -f "${DEPLOY_DIR}/${ARCHIVE_FILENAME}${IMG_SUFFIX}.*"
-rm -f "${DEPLOY_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.img"
+# rm -f "${DEPLOY_DIR}/${ARCHIVE_FILENAME}${IMG_SUFFIX}.*"
+# rm -f "${DEPLOY_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.img"
 
 mv "$INFO_FILE" "$DEPLOY_DIR/"
 
-if [ "${USE_QCOW2}" = "0" ] && [ "${NO_PRERUN_QCOW2}" = "0" ]; then
-	ROOT_DEV="$(mount | grep "${ROOTFS_DIR} " | cut -f1 -d' ')"
+# if [ "${USE_QCOW2}" = "0" ] && [ "${NO_PRERUN_QCOW2}" = "0" ]; then
+# 	ROOT_DEV="$(mount | grep "${ROOTFS_DIR} " | cut -f1 -d' ')"
 
-	unmount "${ROOTFS_DIR}"
-	zerofree "${ROOT_DEV}"
+# 	unmount "${ROOTFS_DIR}"
+# 	zerofree "${ROOT_DEV}"
 
-	unmount_image "${IMG_FILE}"
-else
-	unload_qimage
-	make_bootable_image "${STAGE_WORK_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.qcow2" "$IMG_FILE"
-fi
+# 	unmount_image "${IMG_FILE}"
+# else
+# 	unload_qimage
+# 	make_bootable_image "${STAGE_WORK_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.qcow2" "$IMG_FILE"
+# fi
 
-case "${DEPLOY_COMPRESSION}" in
-zip)
-	pushd "${STAGE_WORK_DIR}" > /dev/null
-	zip -"${COMPRESSION_LEVEL}" \
-	"${DEPLOY_DIR}/${ARCHIVE_FILENAME}${IMG_SUFFIX}.zip" "$(basename "${IMG_FILE}")"
-	popd > /dev/null
-	;;
-gz)
-	pigz --force -"${COMPRESSION_LEVEL}" "$IMG_FILE" --stdout > \
-	"${DEPLOY_DIR}/${ARCHIVE_FILENAME}${IMG_SUFFIX}.img.gz"
-	;;
-xz)
-	xz --compress --force --threads 0 --memlimit-compress=50% -"${COMPRESSION_LEVEL}" \
-	--stdout "$IMG_FILE" > "${DEPLOY_DIR}/${ARCHIVE_FILENAME}${IMG_SUFFIX}.img.xz"
-	;;
-none | *)
-	cp "$IMG_FILE" "$DEPLOY_DIR/"
-;;
-esac
+# case "${DEPLOY_COMPRESSION}" in
+# zip)
+# 	pushd "${STAGE_WORK_DIR}" > /dev/null
+# 	zip -"${COMPRESSION_LEVEL}" \
+# 	"${DEPLOY_DIR}/${ARCHIVE_FILENAME}${IMG_SUFFIX}.zip" "$(basename "${IMG_FILE}")"
+# 	popd > /dev/null
+# 	;;
+# gz)
+# 	pigz --force -"${COMPRESSION_LEVEL}" "$IMG_FILE" --stdout > \
+# 	"${DEPLOY_DIR}/${ARCHIVE_FILENAME}${IMG_SUFFIX}.img.gz"
+# 	;;
+# xz)
+# 	xz --compress --force --threads 0 --memlimit-compress=50% -"${COMPRESSION_LEVEL}" \
+# 	--stdout "$IMG_FILE" > "${DEPLOY_DIR}/${ARCHIVE_FILENAME}${IMG_SUFFIX}.img.xz"
+# 	;;
+# none | *)
+# 	cp "$IMG_FILE" "$DEPLOY_DIR/"
+# ;;
+# esac
+
+SQFS_FILE="${DEPLOY_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.sqfs"
+unmount "${ROOTFS_DIR}"
+
+mksquashfs $ROOTFS_DIR $SQFS_FILE -noappend -no-exports -no-fragments \
+  -all-root -all-time 0 -mkfs-time 0 -noI -noD -noF -noX \
+  -wildcards -e 'writable/*' -e 'boot/*'
