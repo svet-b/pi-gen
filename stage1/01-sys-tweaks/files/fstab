@@ -1,5 +1,5 @@
 proc                  /proc           proc     defaults         0 0
-LABEL=bootfs          /boot           vfat     defaults         0 2
+LABEL=bootfs          /boot           vfat     defaults,ro      0 2
 LABEL=rootfs          /writable       btrfs    defaults,subvol=@writable,ssd_spread,noatime,compress-force=zstd 0 0
 LABEL=rootfs          /img            btrfs    defaults,subvol=@img,ssd_spread,noatime,compress-force=zstd      0 0
 LABEL=rootfs          /mnt/rootfs     btrfs    defaults,noauto,ssd_spread,noatime,compress-force=zstd           0 0
