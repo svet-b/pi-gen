@@ -1,1 +1,1 @@
-console=serial0,115200 console=tty1 root=ROOTDEV rootfstype=ext4 fsck.repair=yes rootwait
+boot=overlay console=serial0,115200 console=tty1 root=LABEL=rootfs rootfstype=btrfs rootflags=subvol=@img,compress-force=zstd overlay=ro noswap rootwait net.ifnames=0
