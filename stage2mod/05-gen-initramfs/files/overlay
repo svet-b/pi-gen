@@ -1,0 +1,88 @@
+# Local filesystem mounting			-*- shell-script -*-
+
+#
+# This script overrides local_mount_root() in /scripts/local
+# and mounts root as a read-only filesystem with a temporary (rw)
+# overlay filesystem.
+#
+
+. /scripts/local
+
+local_mount_root()
+{
+	local_top
+	local_device_setup "${ROOT}" "root file system"
+	ROOT="${DEV}"
+
+	# Get the root filesystem type if not set
+	if [ -z "${ROOTFSTYPE}" ]; then
+		FSTYPE=$(get_fstype "${ROOT}")
+	else
+		FSTYPE=${ROOTFSTYPE}
+	fi
+
+	local_premount
+
+	# CHANGES TO THE ORIGINAL FUNCTION BEGIN HERE
+	# N.B. this code still lacks error checking
+
+	modprobe ${FSTYPE}
+	checkfs ${ROOT} root "${FSTYPE}"
+
+	# Create directories for image store, root and overlay
+	mkdir /img /lower /overlay /upper
+
+	# Mount image store to /img
+	if [ "${FSTYPE}" != "unknown" ]; then
+		mount -r -t ${FSTYPE} ${ROOTFLAGS} ${ROOT} /img
+	else
+		mount -r ${ROOTFLAGS} ${ROOT} /img
+	fi
+
+	# Mount read-only root SquashFS image to /lower
+	mount -t squashfs /img/root/root.sqfs /lower
+
+	modprobe overlay || insmod "/lower/lib/modules/$(uname -r)/kernel/fs/overlayfs/overlay.ko"
+
+	OVERLAY_ARGS=$(sed -nE 's/.*([[:space:]]|^)overlay=([^[:space:]]+).*/\2/p' /proc/cmdline)
+
+	if [ "$OVERLAY_ARGS" = "none" ]; then
+		# Overlay is disabled
+		mount --bind /lower ${rootmnt}
+		return
+	fi
+
+	# Try to mount persistent overlay from Btrfs subvolume in /overlay
+	mount -t ${FSTYPE} -o subvol=@overlay ${ROOT} /overlay
+
+	if [ $? -ne 0 ]; then
+		# Overlay mount failed; just run from SquashFS image directly
+		mount --bind /lower ${rootmnt}
+		return
+	fi
+	# Overlay mount was successful
+
+	case "$OVERLAY_ARGS" in
+	rw)
+		# Overlay is writable
+		OVERLAY_MNT_OPTS="-o lowerdir=/lower,upperdir=/overlay/data,workdir=/overlay/work"
+		;;
+
+	tmp)
+		# Mount a tmpfs for volatile overlay in /upper
+		mount -t tmpfs tmpfs /upper
+		mkdir /upper/data /upper/work
+		OVERLAY_MNT_OPTS="-o lowerdir=/overlay/data:/lower,upperdir=/upper/data,workdir=/upper/work"
+		;;
+	*)
+		# DEFAULT: Overlay is read-only
+		OVERLAY_MNT_OPTS="-o ro,lowerdir=/lower,upperdir=/overlay/data,workdir=/overlay/work"
+		# The following also works but doesn't allow for a read-write remount later
+		# OVERLAY_MNT_OPTS="-o lowerdir=/overlay/data:/lower"
+		;;
+	esac
+
+	# Mount the final overlay-root in $rootmnt
+	mount -t overlay ${OVERLAY_MNT_OPTS} overlay ${rootmnt}
+
+}
