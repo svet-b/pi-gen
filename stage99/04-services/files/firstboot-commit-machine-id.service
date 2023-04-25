@@ -1,0 +1,16 @@
+[Unit]
+Description=Commit /etc/machine-id after mounting R/W root
+DefaultDependencies=no
+Requires=remount-rw.service
+After=local-fs.target
+Before=sshd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl start systemd-machine-id-commit.service
+ExecStartPost=/usr/bin/systemctl disable %n
+RemainAfterExit=yes
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target

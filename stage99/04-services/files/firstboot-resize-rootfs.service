@@ -1,0 +1,16 @@
+[Unit]
+Description=Grow Root Partition and Filesystem
+DefaultDependencies=no
+Wants=remount-rw.service
+Before=local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/resize_rootfs.sh
+ExecStartPost=/usr/bin/systemctl disable %n
+RemainAfterExit=yes
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target

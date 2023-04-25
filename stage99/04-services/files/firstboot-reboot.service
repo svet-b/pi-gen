@@ -1,0 +1,15 @@
+[Unit]
+Description=Reboot After First Boot
+After=firstboot-commit-machine-id.service
+After=firstboot-generate-ssh-keys.service
+After=firstboot-resize-rootfs.service
+After=firstboot-set-hostname.service
+
+[Service]
+Type=oneshot
+# We definitely don't want this running in a loop, even if it "fails"
+ExecStartPre=/usr/bin/systemctl disable %n
+ExecStart=/usr/bin/systemctl reboot
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+[Unit]
+Description=On-Demand Read-Write Remount Service for /
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mount -o remount,rw /
+ExecStop=/usr/bin/mount -o remount,ro /
+RemainAfterExit=yes

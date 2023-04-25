@@ -1,0 +1,14 @@
+[Unit]
+Description=Set Hostname Based on MAC
+Requires=remount-rw.service
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/set_hostname_from_mac.sh
+ExecStartPost=/usr/bin/systemctl disable %n
+RemainAfterExit=yes
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target
