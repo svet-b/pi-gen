@@ -8,3 +8,4 @@ wget
 socat
 duperemove
 netplug
+wireguard
