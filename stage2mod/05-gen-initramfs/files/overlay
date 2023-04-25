@@ -61,6 +61,8 @@ local_mount_root()
 		return
 	fi
 	# Overlay mount was successful
+	# Ensure that required directories exist
+	mkdir -p /overlay/data /overlay/work
 
 	case "$OVERLAY_ARGS" in
 	rw)
