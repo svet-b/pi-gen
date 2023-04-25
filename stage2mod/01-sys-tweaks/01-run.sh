@@ -14,31 +14,21 @@ if [ "${PUBKEY_ONLY_SSH}" = "1" ]; then
 	sed -i -Ee 's/^#?[[:blank:]]*PubkeyAuthentication[[:blank:]]*no[[:blank:]]*$/PubkeyAuthentication yes/
 s/^#?[[:blank:]]*PasswordAuthentication[[:blank:]]*yes[[:blank:]]*$/PasswordAuthentication no/' "${ROOTFS_DIR}"/etc/ssh/sshd_config
 fi
+sed -i '/^#HostKey \/etc\/ssh\/ssh_host_ecdsa_key/s/^#//' "${ROOTFS_DIR}"/etc/ssh/sshd_config
+sed -i '/^#HostKey \/etc\/ssh\/ssh_host_ed25519_key/s/^#//' "${ROOTFS_DIR}"/etc/ssh/sshd_config
 
 on_chroot << EOF
-# TODO: Check
-#systemctl disable hwclock.sh
-#systemctl disable rpcbind
 if [ "${ENABLE_SSH}" == "1" ]; then
 	systemctl enable ssh
 else
 	systemctl disable ssh
 fi
-# TODO: Check
-#systemctl enable regenerate_ssh_host_keys
 EOF
 
 if [ "${USE_QEMU}" = "1" ]; then
 	echo "enter QEMU mode"
 	install -m 644 files/90-qemu.rules "${ROOTFS_DIR}/etc/udev/rules.d/"
-	on_chroot << EOF
-systemctl disable resize2fs_once
-EOF
 	echo "leaving QEMU mode"
-else
-	on_chroot << EOF
-systemctl enable resize2fs_once
-EOF
 fi
 
 on_chroot <<EOF
