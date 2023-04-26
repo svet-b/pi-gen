@@ -1,0 +1,13 @@
+[Unit]
+Description=RTC configuration for MCP79410
+DefaultDependencies=no
+Wants=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/configrtc.sh
+RemainAfterExit=yes
+TimeoutStartSec=30
+
+[Install]
+WantedBy=sysinit.target
