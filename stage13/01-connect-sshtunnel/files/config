@@ -1,0 +1,6 @@
+SITE=ammp_site
+USER=remote
+REMOTE=et.ammp.io
+PORT=8080
+KNOWN_HOSTS=known_hosts
+PRIV_KEY=id_ed25519_remote

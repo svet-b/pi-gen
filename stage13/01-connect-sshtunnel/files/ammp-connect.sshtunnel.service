@@ -1,0 +1,30 @@
+[Unit]
+Description=ammp-connect SSH tunnel
+Wants=network.target
+After=network.target
+
+[Service]
+EnvironmentFile=/usr/local/sshtunnel/config
+Environment=AUTOSSH_PATH=/usr/bin/ssh
+Environment=AUTOSSH_GATETIME=0
+Environment=AUTOSSH_DEBUG=1
+WorkingDirectory=/usr/local/sshtunnel
+ExecStart=/bin/sh -c '/usr/bin/autossh -M 0 \
+    -o ExitOnForwardFailure=yes \
+    -o ConnectTimeout=60 \
+    -o ServerAliveInterval=60 \
+    -o ServerAliveCountMax=3 \
+    -o TCPKeepAlive=yes \
+    -o StrictHostKeyChecking=yes \
+    -o UserKnownHostsFile="$KNOWN_HOSTS" \
+    -p "$PORT" -N \
+    -R 0:localhost:22 \
+    -i "$PRIV_KEY" -v \
+    "$USER"@"$REMOTE"'
+Restart=on-failure
+TimeoutStopSec=30
+Type=simple
+SyslogIdentifier=ammp-connect.sshtunnel
+
+[Install]
+WantedBy=multi-user.target
