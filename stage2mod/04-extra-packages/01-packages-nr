@@ -1,3 +1,4 @@
+bsdiff
 btrfs-progs
 squashfs-tools
 xz-utils
@@ -8,4 +9,3 @@ wget
 socat
 duperemove
 netplug
-wireguard
