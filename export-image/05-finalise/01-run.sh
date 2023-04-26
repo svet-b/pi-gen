@@ -118,6 +118,8 @@ mv "$INFO_FILE" "$DEPLOY_DIR/"
 SQFS_FILE="${DEPLOY_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.sqfs"
 unmount "${ROOTFS_DIR}"
 
+mv -f $SQFS_FILE "${SQFS_FILE}.old"
+
 mksquashfs $ROOTFS_DIR $SQFS_FILE -noappend -no-exports -no-fragments \
   -all-root -all-time 0 -mkfs-time 0 -noI -noD -noF -noX \
   -wildcards -e 'writable/*' -e 'boot/*'
