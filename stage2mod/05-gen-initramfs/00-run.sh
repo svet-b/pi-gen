@@ -11,5 +11,6 @@ update-initramfs -u -k $KVER
 EOF
 
 cat >> "${ROOTFS_DIR}"/boot/config.txt << EOF
+[all]
 initramfs initrd.img-$KVER
 EOF
