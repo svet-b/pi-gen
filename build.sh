@@ -287,6 +287,8 @@ if [ "$SETFCAP" != "1" ]; then
 	export CAPSH_ARG="--drop=cap_setfcap"
 fi
 
+export FULL_IMG="${FULL_IMG:-0}"
+
 dependencies_check "${BASE_DIR}/depends"
 
 #check username is valid
